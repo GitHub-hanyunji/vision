@@ -5,6 +5,7 @@ import warnings
 
 import presets
 import torch
+from torch.amp import autocast
 import torch.utils.data
 import torchvision
 import torchvision.transforms
@@ -14,9 +15,12 @@ from torch import nn
 from torch.utils.data.dataloader import default_collate
 from torchvision.transforms.functional import InterpolationMode
 from transforms import get_mixup_cutmix
+from project import *
+import numpy as np
 
 
-def train_one_epoch(model, criterion, optimizer, data_loader, device, epoch, args, model_ema=None, scaler=None):
+
+def train_one_epoch(model, criterion, optimizer, data_loader, device, epoch, args, rec_train, model_ema=None, scaler=None):
     model.train()
     metric_logger = utils.MetricLogger(delimiter="  ")
     metric_logger.add_meter("lr", utils.SmoothedValue(window_size=1, fmt="{value}"))
@@ -26,7 +30,7 @@ def train_one_epoch(model, criterion, optimizer, data_loader, device, epoch, arg
     for i, (image, target) in enumerate(metric_logger.log_every(data_loader, args.print_freq, header)):
         start_time = time.time()
         image, target = image.to(device), target.to(device)
-        with torch.cuda.amp.autocast(enabled=scaler is not None):
+        with autocast(device_type='cuda', enabled=scaler is not None):
             output = model(image)
             loss = criterion(output, target)
 
@@ -51,19 +55,24 @@ def train_one_epoch(model, criterion, optimizer, data_loader, device, epoch, arg
                 # Reset ema buffer to keep copying weights during warmup period
                 model_ema.n_averaged.fill_(0)
 
-        acc1, acc5 = utils.accuracy(output, target, topk=(1, 5))
+        acc1, acc5 = utils.accuracy(output, target, topk=(1, 2)) #5 -> 2(클래스 개수 dog, cat 2개로 수정.)
         batch_size = image.shape[0]
         metric_logger.update(loss=loss.item(), lr=optimizer.param_groups[0]["lr"])
         metric_logger.meters["acc1"].update(acc1.item(), n=batch_size)
+       
         metric_logger.meters["acc5"].update(acc5.item(), n=batch_size)
         metric_logger.meters["img/s"].update(batch_size / (time.time() - start_time))
+    #rec 데이터 추가. 그래프
+    #Train단계
+    rec_train[0].append(loss.item())
+    print('학습 loss', loss.item())
+    rec_train[1].append(metric_logger.meters['acc1'].global_avg)
+    print('학습 acc', metric_logger.meters['acc1'].global_avg)
 
-
-def evaluate(model, criterion, data_loader, device, print_freq=100, log_suffix=""):
+def evaluate(model, criterion, data_loader, device, rec_valid, print_freq=100, log_suffix="", epoch=0):
     model.eval()
     metric_logger = utils.MetricLogger(delimiter="  ")
     header = f"Test: {log_suffix}"
-
     num_processed_samples = 0
     with torch.inference_mode():
         for image, target in metric_logger.log_every(data_loader, print_freq, header):
@@ -72,14 +81,20 @@ def evaluate(model, criterion, data_loader, device, print_freq=100, log_suffix="
             output = model(image)
             loss = criterion(output, target)
 
-            acc1, acc5 = utils.accuracy(output, target, topk=(1, 5))
+            acc1, acc5 = utils.accuracy(output, target, topk=(1, 2))
             # FIXME need to take into account that the datasets
             # could have been padded in distributed setup
             batch_size = image.shape[0]
             metric_logger.update(loss=loss.item())
             metric_logger.meters["acc1"].update(acc1.item(), n=batch_size)
+            
             metric_logger.meters["acc5"].update(acc5.item(), n=batch_size)
             num_processed_samples += batch_size
+        #rec 데이터 추가. 그래프
+        rec_valid[0].append(loss.item())
+        print('검증 loss', loss.item())
+        rec_valid[1].append(metric_logger.meters['acc1'].global_avg)
+        print('검증 acc', metric_logger.meters['acc1'].global_avg)
     # gather the stats from all processes
 
     num_processed_samples = utils.reduce_across_processes(num_processed_samples)
@@ -201,7 +216,7 @@ def load_data(traindir, valdir, args):
     return dataset, dataset_test, train_sampler, test_sampler
 
 
-def main(args):
+def main(myWindow,args):
     if args.output_dir:
         utils.mkdir(args.output_dir)
 
@@ -245,9 +260,18 @@ def main(args):
     )
 
     print("Creating model")
-    model = torchvision.models.get_model(args.model, weights=args.weights, num_classes=num_classes)
+    model = torchvision.models.get_model(args.model, weights=args.weights, num_classes=1000)
+    print(model.fc)
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    print(model.fc)
     model.to(device)
-
+    
+    for param in model.parameters():
+        param.requires_grad = False
+    model.fc.weight.requires_grad = True
+    model.fc.bias.requires_grad = True
+    for name, param in model.named_parameters():
+        print(name, param.requires_grad)
     if args.distributed and args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
 
@@ -362,14 +386,29 @@ def main(args):
 
     print("Start training")
     start_time = time.time()
+    rec_train = [[],[]]
+    rec_valid = [[],[]]
+
     for epoch in range(args.start_epoch, args.epochs):
+        key=myWindow.stop_training()
+        if(key==False):
+            break
+        
         if args.distributed:
             train_sampler.set_epoch(epoch)
-        train_one_epoch(model, criterion, optimizer, data_loader, device, epoch, args, model_ema, scaler)
+        #학습 데이터셋.
+        train_one_epoch(model, criterion, optimizer, data_loader, device, epoch, args, rec_train, model_ema, scaler)
         lr_scheduler.step()
-        evaluate(model, criterion, data_loader_test, device=device)
+        #검증데이터셋
+        evaluate(model, criterion, data_loader_test, device=device, rec_valid=rec_valid, epoch=epoch)
+        
+        print('epoch 학습 데이터 : ', str(epoch))
+        print(rec_train)
+        print('epoch 검증 데이터 : ', str(epoch))
+        print(rec_valid)
+        
         if model_ema:
-            evaluate(model_ema, criterion, data_loader_test, device=device, log_suffix="EMA")
+            evaluate(model_ema, criterion, data_loader_test, device=device, log_suffix="EMA", epoch=epoch)
         if args.output_dir:
             checkpoint = {
                 "model": model_without_ddp.state_dict(),
@@ -384,13 +423,21 @@ def main(args):
                 checkpoint["scaler"] = scaler.state_dict()
             utils.save_on_master(checkpoint, os.path.join(args.output_dir, f"model_{epoch}.pth"))
             utils.save_on_master(checkpoint, os.path.join(args.output_dir, "checkpoint.pth"))
+            #모델의 구조와 가중치 모두 저장하는 코드 추가.
+            torch.save(model, os.path.join(args.output_dir, "model.pth"))
+            
+            to_numpy_train = np.array(rec_train)
+            to_numpy_valid = np.array(rec_valid)
+                
+            x_arr = np.arange(epoch + 1)
+            
+            print('그래프 그리기 x_arr : ', str(x_arr))
+            myWindow.plot(x_arr,to_numpy_valid,to_numpy_train)
+    print("학습이 끝났습니다.")
+            
+            
 
-    total_time = time.time() - start_time
-    total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-    print(f"Training time {total_time_str}")
-
-
-def get_args_parser(add_help=True):
+def get_args_parser(folder_path,epoch,worker,lr,model,weight,device,resultfolder_path,add_help=True):
     import argparse
 
     parser = argparse.ArgumentParser(description="PyTorch Classification Training", add_help=add_help)
@@ -520,9 +567,11 @@ def get_args_parser(add_help=True):
     parser.add_argument("--weights", default=None, type=str, help="the weights enum name to load")
     parser.add_argument("--backend", default="PIL", type=str.lower, help="PIL or tensor - case insensitive")
     parser.add_argument("--use-v2", action="store_true", help="Use V2 transforms")
-    return parser
+    test_args = ["--data-path",folder_path,"--epochs",str(epoch),"--workers",str(worker),"--lr",str(lr),"--model", model,"--weights",weight,"--device",device,"--output-dir",resultfolder_path]
+    args=parser.parse_args(test_args)
+    return args
 
 
-if __name__ == "__main__":
-    args = get_args_parser().parse_args()
-    main(args)
+
+
+
