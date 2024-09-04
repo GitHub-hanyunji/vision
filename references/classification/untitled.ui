@@ -44,7 +44,7 @@
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:white;</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string/>
@@ -78,11 +78,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -105,11 +105,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -132,11 +132,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -161,11 +161,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -188,11 +188,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -215,11 +215,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -244,11 +244,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -271,11 +271,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -298,11 +298,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -329,7 +329,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.1875 rgba(222, 222, 222, 255), stop:1 rgba(255, 255, 255, 255))</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string>Dataset Directory</string>
@@ -356,7 +356,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.1875 rgba(222, 222, 222, 255), stop:1 rgba(255, 255, 255, 255))</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string>Model Training</string>
@@ -365,9 +365,9 @@
    <widget class="QComboBox" name="weight_comboBox">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>250</x>
       <y>250</y>
-      <width>111</width>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -418,7 +418,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.1875 rgba(222, 222, 222, 255), stop:1 rgba(255, 255, 255, 255))</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string>model</string>
@@ -430,9 +430,9 @@
    <widget class="QSpinBox" name="worker_spinBox">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>250</x>
       <y>160</y>
-      <width>111</width>
+      <width>101</width>
       <height>22</height>
      </rect>
     </property>
@@ -453,9 +453,9 @@
    <widget class="QSpinBox" name="epochs_spinBox">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>250</x>
       <y>130</y>
-      <width>111</width>
+      <width>101</width>
       <height>22</height>
      </rect>
     </property>
@@ -476,9 +476,9 @@
    <widget class="QDoubleSpinBox" name="lr_spinBox">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>250</x>
       <y>190</y>
-      <width>111</width>
+      <width>101</width>
       <height>22</height>
      </rect>
     </property>
@@ -508,9 +508,9 @@
    <widget class="QComboBox" name="model_comboBox">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>250</x>
       <y>220</y>
-      <width>111</width>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -561,7 +561,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.1875 rgba(222, 222, 222, 255), stop:1 rgba(255, 255, 255, 255))</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string>epochs</string>
@@ -586,7 +586,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.1875 rgba(222, 222, 222, 255), stop:1 rgba(255, 255, 255, 255))</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string>learning rate</string>
@@ -611,7 +611,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.1875 rgba(222, 222, 222, 255), stop:1 rgba(255, 255, 255, 255))</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string>weight</string>
@@ -636,7 +636,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.1875 rgba(222, 222, 222, 255), stop:1 rgba(255, 255, 255, 255))</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string>worker</string>
@@ -676,7 +676,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.1875 rgba(222, 222, 222, 255), stop:1 rgba(255, 255, 255, 255))</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string>Model Training Stop</string>
@@ -685,9 +685,9 @@
    <widget class="QComboBox" name="device_comboBox">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>250</x>
       <y>280</y>
-      <width>111</width>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -728,7 +728,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.1875 rgba(222, 222, 222, 255), stop:1 rgba(255, 255, 255, 255))</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string>device</string>
@@ -747,7 +747,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:white;</string>
+     <string notr="true">border-radius:7px; background-color:white</string>
     </property>
    </widget>
    <widget class="QToolButton" name="out_directory">
@@ -772,11 +772,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -799,11 +799,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -826,11 +826,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -855,11 +855,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -882,11 +882,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -909,11 +909,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -938,11 +938,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -965,11 +965,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -992,11 +992,11 @@
             <blue>192</blue>
            </color>
           </gradientstop>
-          <gradientstop position="0.187500000000000">
+          <gradientstop position="0.301136000000000">
            <color alpha="255">
-            <red>222</red>
-            <green>222</green>
-            <blue>222</blue>
+            <red>233</red>
+            <green>233</green>
+            <blue>233</blue>
            </color>
           </gradientstop>
           <gradientstop position="1.000000000000000">
@@ -1023,7 +1023,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.1875 rgba(222, 222, 222, 255), stop:1 rgba(255, 255, 255, 255))</string>
+     <string notr="true">border-radius:7px; background-color:qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(192, 192, 192, 255), stop:0.301136 rgba(233, 233, 233, 255), stop:1 rgba(255, 255, 255, 255))</string>
     </property>
     <property name="text">
      <string>Output Directory</string>

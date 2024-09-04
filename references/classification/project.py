@@ -13,6 +13,7 @@ from matplotlib.figure import Figure
 form_class = uic.loadUiType("untitled.ui")[0]
 
 
+# Thread 클래스
 class TrainThread(QThread):
     progress = pyqtSignal(str)  # Progress signal to update the GUI
     
@@ -23,22 +24,22 @@ class TrainThread(QThread):
         self._running=True
 
     def run(self):
-        original_stdout = sys.stdout  # Save a reference to the original standard output
-        sys.stdout = OutputCapture(self.progress)  # Redirect stdout to capture output
-
+        original_stdout = sys.stdout  # 원래의 표준 출력(터미널)을 저장
+        # 표준 출력을 OutputCapture로 리다이렉트하여 터미널 출력을 캡처
+        sys.stdout = OutputCapture(self.progress) 
+        # 학습 작업 시작
         train.main(self.window, self.args)
-
+        # 학습 작업이 끝나면 표준 출력을 원래대로 복구
         sys.stdout = original_stdout
-    # def stop(self):
-    #     self._running=False
 
-# 터미널 class
+# 터미널 출력을 캡처하고 pyqt 시그널로 전송하는 클래스
 class OutputCapture:
     def __init__(self, signal):
         self.signal = signal
 
     def write(self, text):
-        if text.strip():  # Only emit non-empty text
+        # 공백이 아닌 경우에만 시그널로 전송
+        if text.strip():  
             self.signal.emit(text)
 
     def flush(self):
@@ -82,7 +83,6 @@ class WindowClass(QTabWidget, form_class):
     
 
 
-
     def run_shell_command(self):
         self.shell.clear()  # 텍스트 위젯을 비웁니다.
         self.worker.start()    # 스레드를 시작하여 명령어를 실행합니다.
@@ -96,22 +96,22 @@ class WindowClass(QTabWidget, form_class):
         
         # Create subplots
         self.ax1 = self.figure.add_subplot(2, 1, 1)
-        self.ax1.plot(x_arr, to_numpy_train[0], '-o', label='Train loss')
-        self.ax1.plot(x_arr, to_numpy_valid[0], '-->', label='Valid loss')
+        self.ax1.plot(x_arr, to_numpy_train[0], '-', label='Train loss')
+        self.ax1.plot(x_arr, to_numpy_valid[0], '--', label='Valid loss')
         handles, labels = self.ax1.get_legend_handles_labels()
         by_label = dict(zip(labels, handles))
         self.ax1.legend(by_label.values(), by_label.keys())
         
         self.ax2 = self.figure.add_subplot(2, 1, 2)
-        self.ax2.plot(x_arr, to_numpy_train[1], '-o', label='Train acc')
-        self.ax2.plot(x_arr, to_numpy_valid[1], '-->', label='Valid acc')
+        self.ax2.plot(x_arr, to_numpy_train[1], '-', label='Train acc')
+        self.ax2.plot(x_arr, to_numpy_valid[1], '--', label='Valid acc')
         handles, labels = self.ax2.get_legend_handles_labels()
         by_label = dict(zip(labels, handles))
         self.ax2.legend(by_label.values(), by_label.keys())
         
         self.ax1.set_title('Loss')
         self.ax2.set_title('Accuracy')
-        # Draw the canvas
+        # canvas 그리기
         self.canvas.draw()
     
     def for_key(self):
@@ -128,13 +128,13 @@ class WindowClass(QTabWidget, form_class):
         # 선택된 파일 처리 if문
         if self.folder_path:
             # 선택된 파일 경로를 QLabel에 표시
-            self.file_dirShow.setText(f"선택된 폴더 경로: {self.folder_path}")
+            self.file_dirShow.setText(f"select folder path : {self.folder_path}")
         else:
-            self.file_dirShow.setText("선택된 폴더 경로: 폴더가 선택되지 않았습니다.")
+            self.file_dirShow.setText("select folder path : not select")
             
     def openFolderDialog_result(self):
         # 파일 다이얼로그를 열어 사용자가 파일을 선택하도록 함
-        self.resultfolder_path = QFileDialog.getExistingDirectory(self, "폴더 선택", "")
+        self.resultfolder_path = QFileDialog.getExistingDirectory(self, "choice folder", "")
         self.file_dirShow.setText(f"input: {self.folder_path}\noutput: {self.resultfolder_path}")
     def run_command(self):
         # 실행할 명령어 정의
