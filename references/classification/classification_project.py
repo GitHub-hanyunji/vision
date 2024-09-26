@@ -6,6 +6,7 @@ from PyQt5.QtCore import QThread,pyqtSignal
 from PIL import Image
 import time
 import classification_train
+
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
@@ -13,7 +14,17 @@ from matplotlib.figure import Figure
 
 # UI 파일 연결
 # 단, UI 파일은 Python 코드 파일과 같은 디렉토리에 위치해야 한다.
-form_class = uic.loadUiType("new1.ui")[0]
+# 현재 파일의 디렉토리 경로
+current_file_dir = os.path.dirname(__file__)
+
+# UI 파일의 절대 경로 설정
+ui_file_path = os.path.join(current_file_dir, 'new1.ui')
+
+if not os.path.isfile(ui_file_path):
+    print(f"UI file does not exist: {ui_file_path}")
+else:
+    # UI 파일 연결
+    form_class = uic.loadUiType(ui_file_path)[0]
 
 
 # Thread 클래스
@@ -119,13 +130,13 @@ class WindowClass(QTabWidget, form_class):
         self.thread.progress.connect(self.display_test_output)  # TrainThread의 출력을 GUI에 연결
         self.thread.start()        
     def run_shell_command(self):
-        self.shell.clear()  # 텍스트 위젯을 비웁니다.
+        self.classification_shell.clear()  # 텍스트 위젯을 비웁니다.
         self.worker.start()    # 스레드를 시작하여 명령어를 실행합니다.
 
     def display_output(self,text):
-        self.shell.append(text)  # 터미널 출력을 텍스트 위젯에 추가합니다.
+        self.classification_shell.append(text)  # 터미널 출력을 텍스트 위젯에 추가합니다.
     def display_test_output(self,text):
-        self.shell_2.append(text)  # 터미널 출력을 텍스트 위젯에 추가합니다.
+        self.classification_shell_2.append(text)  # 터미널 출력을 텍스트 위젯에 추가합니다.
         
     # 그래프 그리기
     def plot(self,x_arr,to_numpy_valid,to_numpy_train):

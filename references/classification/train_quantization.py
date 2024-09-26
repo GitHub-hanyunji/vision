@@ -7,16 +7,16 @@ import torch
 import torch.ao.quantization
 import torch.utils.data
 import torchvision
-import utils
+import classification_utils
 from torch import nn
-from train import evaluate, load_data, train_one_epoch
+from classification_train import evaluate, load_data, train_one_epoch
 
 
 def main(args):
     if args.output_dir:
-        utils.mkdir(args.output_dir)
+        classification_utils.mkdir(args.output_dir)
 
-    utils.init_distributed_mode(args)
+    classification_utils.init_distributed_mode(args)
     print(args)
 
     if args.post_training_quantize and args.distributed:
@@ -97,7 +97,7 @@ def main(args):
         torch.ao.quantization.convert(model, inplace=True)
         if args.output_dir:
             print("Saving quantized model")
-            if utils.is_main_process():
+            if classification_utils.is_main_process():
                 torch.save(model.state_dict(), os.path.join(args.output_dir, "quantized_post_train_model.pth"))
         print("Evaluating post-training quantized model")
         evaluate(model, criterion, data_loader_test, device=device)
@@ -145,8 +145,8 @@ def main(args):
                 "epoch": epoch,
                 "args": args,
             }
-            utils.save_on_master(checkpoint, os.path.join(args.output_dir, f"model_{epoch}.pth"))
-            utils.save_on_master(checkpoint, os.path.join(args.output_dir, "checkpoint.pth"))
+            classification_utils.save_on_master(checkpoint, os.path.join(args.output_dir, f"model_{epoch}.pth"))
+            classification_utils.save_on_master(checkpoint, os.path.join(args.output_dir, "checkpoint.pth"))
         print("Saving models after epoch ", epoch)
 
     total_time = time.time() - start_time
