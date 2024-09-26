@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 import torch
-import transforms as reference_transforms
+import detection_transforms as reference_transforms
 
 
 def get_modules(use_v2):

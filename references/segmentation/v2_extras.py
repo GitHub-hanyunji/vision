@@ -42,8 +42,8 @@ class CocoDetectionToVOCSegmentation(v2.Transform):
 
     COCO_TO_VOC_LABEL_MAP = dict(
         zip(
-            [0, 5, 2, 16, 9, 44, 6, 3, 17, 62, 21, 67, 18, 19, 4, 1, 64, 20, 63, 7, 72],
-            range(21),
+            [ 0, 1, 2,3,4,5,6,7,8 ],
+            range(9),
         )
     )
     INVALID_VALUE = 255
