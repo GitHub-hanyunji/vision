@@ -7,6 +7,7 @@ from PIL import Image
 import cv2
 import detection_train
 import time
+import math
 import numpy as np
 import torch
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -225,9 +226,7 @@ class WindowClass(QTabWidget, form_class):
             self.thread = TrainThread(args, self)
             self.thread.progress.connect(self.display_output)  # TrainThread의 출력을 GUI에 연결
             self.thread.start() 
-            # self.thread.start()
 
-    
     def test(self):
         # 모델 로드
         print(f'{self.model_path}/model.pth')
@@ -238,9 +237,23 @@ class WindowClass(QTabWidget, form_class):
             '__background__', 'big robot', 'small robot'
         ]
         test_path = self.test_folder_path
-        threshold = 0.2
+        threshold = 0.1
         total_time = 0  # 전체 테스트 시간 저장
         print("테스트 경로 : ", str(test_path))
+        files = [f for f in os.listdir(test_path) if os.path.isfile(os.path.join(test_path, f))]
+        file_num = len(files)
+        # 파일의 개수에 대한 제곱근 계산
+        sqrt = math.sqrt(file_num)
+        # 행과 열을 초기값으로 설정
+        rows = math.floor(sqrt)
+        cols = math.ceil(sqrt)
+        # 행 * 열이 파일 수보다 작을 경우, 행 또는 열을 늘려줌
+        while rows * cols < file_num:
+            if cols > rows:
+                rows += 1
+            else:
+                cols += 1
+        number=0
         for filename in os.listdir(test_path):
             print("filename : ", filename)
             img_path = os.path.join(test_path, filename)
@@ -257,55 +270,58 @@ class WindowClass(QTabWidget, form_class):
             # 소요 시간 계산
             elapsed_time = end_time - start_time
             total_time += elapsed_time
-            print(f"이미지 {filename} 처리에 걸린 시간: {elapsed_time:.4f}초")
+            print(f"Time: {elapsed_time:.4f}초")
 
             pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].numpy())]
             pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().numpy())]
             pred_score = list(pred[0]['scores'].detach().numpy())
-
-            pred_t = [pred_score.index(x) for x in pred_score if x > threshold]
-            print("리스트 : ", pred_t)
-            print("Point A")
-            if pred_t:
-                print("Point B")
-                pred_t = pred_t[-1]  # 마지막 임계값 초과 인덱스
-                pred_boxes = pred_boxes[:pred_t + 1]
-                pred_class = pred_class[:pred_t + 1]
-
-                # 이미지 읽기 및 색상 변환
-                img_cv = cv2.imread(img_path)
-                print("이미지 경로 : ", img_path)
-                if os.path.exists(img_path):
-                    print("이미지 파일이 존재합니다.")
-                if img_cv is None:
-                    print("이미지를 로드할 수 없습니다.")
-                else:
-                    print("이미지 호출 완료")
-                img_cv = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
-                #cv2.imshow('str', img_cv)
-
-                # 사각형 및 텍스트 그리기
-                for i in range(len(pred_boxes)):
-                    cv2.rectangle(img_cv, 
-                        (int(pred_boxes[i][0][0]), int(pred_boxes[i][0][1])),
-                        (int(pred_boxes[i][1][0]), int(pred_boxes[i][1][1])), 
-                        (0, 255, 0), thickness=3)
-                    cv2.putText(img_cv, pred_class[i] + ':' + f'{pred_score[i]:.4f}', 
-                        (int(pred_boxes[i][0][0]), int(pred_boxes[i][0][1])), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), thickness=2)
             
-            self.test_show(img_cv)
-        print(f"총 테스트 소요 시간: {total_time:.4f}초")
+            # 각 클래스별 최고 점수 인스턴스 선택
+            best_predictions = {}
+            for i in range(len(pred_class)):
+                if pred_score[i] > threshold:
+                    class_name = pred_class[i]
+                    if class_name not in best_predictions:
+                        best_predictions[class_name] = (pred_score[i], pred_boxes[i])
+                    else:
+                        # 기존의 최고 점수보다 높은 경우 업데이트
+                        if pred_score[i] > best_predictions[class_name][0]:
+                            best_predictions[class_name] = (pred_score[i], pred_boxes[i])
+
+            # 이미지 읽기 및 색상 변환
+            img_cv = cv2.imread(img_path)
+            print("img path : ", img_path)
+            if not os.path.exists(img_path):
+                print("No image file.")
+                return
+            if img_cv is None:
+                print("No image load")
+                return
+            img_cv = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
+
+            # 사각형 및 텍스트 그리기
+            for class_name, (best_score, best_box) in best_predictions.items():
+                cv2.rectangle(img_cv, 
+                            (int(best_box[0][0]), int(best_box[0][1])),
+                            (int(best_box[1][0]), int(best_box[1][1])), 
+                            (0, 255, 0), thickness=3)
+                cv2.putText(img_cv, f'{class_name}: {best_score:.4f}', 
+                            (int(best_box[0][0]), int(best_box[0][1])), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), thickness=2)
+            number+=1
+            # NumPy 배열을 PIL 이미지로 변환
+            test_image = Image.fromarray(img_cv)
+            test_image = test_image.resize((256, 256))  # 256x256으로 조정
+            test_image = test_image.crop((16, 16, 240, 240))  # 중앙을 기준으로 224x224로 자르기
+            self.test_show(test_image,rows,cols,number)
+        print(f"Total time: {total_time:.4f}초")    
         
-        
-    def test_show(self,img):
-        self.test_figure.clear()  # 이전 그래프 지우기
-        ax = self.test_figure.add_subplot(111)
-        ax.imshow(img)
-        ax.set_xticks([])
-        ax.set_yticks([])
-        # canvas에 그리기
-        self.test_canvas.figure = self.test_figure
+    def test_show(self,img,rows,cols,number):
+        sub = self.test_figure.add_subplot(rows, cols, number)
+        sub.imshow(img)
+        sub.set_xticks([])  # x축 눈금 제거
+        sub.set_yticks([])  # y축 눈금 제거
+        sub.set_aspect('equal')  # 비율 고정
         self.test_canvas.draw()
             
 

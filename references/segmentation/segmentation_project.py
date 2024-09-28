@@ -7,6 +7,8 @@ import segmentation_train
 from matplotlib.figure import Figure
 from PIL import Image,ImageOps
 import torchvision.transforms as T
+import numpy as np
+import math
 
 current_file_dir = os.path.dirname(__file__)
 
@@ -244,87 +246,47 @@ class WindowClass(QTabWidget, form_class):
             b[idx] = label_colors[l, 2]   
         rgb = segmentation_train.np.stack([r, g, b], axis=2)
         return rgb
-    
-    # def test(self):    
-    #     # load pth model
+    # 이미지 리사이즈 및 크롭 함수
+    def resize_and_crop(self,img, target_size=(224, 224)):
+        # 원본 이미지 비율 계산
+        img_ratio = img.width / img.height
+        target_ratio = target_size[0] / target_size[1]
 
-    #     model = train.torch.load(self.model_path)
+        if img_ratio > target_ratio:
+            # 이미지가 더 넓음: 높이를 기준으로 리사이즈
+            new_height = target_size[1]
+            new_width = int(new_height * img_ratio)
+        else:
+            # 이미지가 더 높음: 너비를 기준으로 리사이즈
+            new_width = target_size[0]
+            new_height = int(new_width / img_ratio)
 
-    #     # set model to inference mode
+        # 이미지 리사이즈
+        img = img.resize((new_width, new_height), Image.LANCZOS)
 
-    #     model.eval()
+        # 중앙을 기준으로 224x224로 크롭
+        left = (new_width - target_size[0]) / 2
+        top = (new_height - target_size[1]) / 2
+        right = (new_width + target_size[0]) / 2
+        bottom = (new_height + target_size[1]) / 2
 
-    #     #print(model)
-    #     # prediction
-
-    #     img_path = self.img_path
-
-    #     img = Image.open(img_path)
-
-    #     transform = T.Compose([T.Resize(520),
-    #                 T.CenterCrop(480),
-    #                 T.ToTensor(),
-    #                 T.Normalize(        
-    #                 mean=[0.485, 0.456, 0.406],
-    #                 std=[0.229, 0.224, 0.225])
-    #                 ])
-    #     trans_img = transform(img).permute(1, 2, 0)
-    #     img = transform(img).unsqueeze(0)
-    #     out = model(img)['out']
-    #     print(img.shape)
-    #     print(out.shape)
-    #     om = train.torch.argmax(out.squeeze(), dim=0).detach().cpu().numpy()
-    #     print (om.shape)
-    #     print (train.np.unique(om))
-    #     rgb = self.decode_segmap(om)
-    #     self.test_show(trans_img,rgb)
-    #     # self.test_figure = Figure()
-    #     # self.test_canvas = FigureCanvas(self.test_figure)
-        
-    #     # # UI에서 graphWidget을 가져와 layout 설정
-    #     # test_layout = QVBoxLayout(self.train_image)  # graphWidget이 있는 QFrame 또는 QWidget
-    #     # test_layout.addWidget(self.test_canvas)
-        
-        
-    #     # self.test_figure.clear()  # 이전 그래프 지우기
-    #     # ax1 = self.test_figure.add_subplot(121)
-    #     # ax2 = self.test_figure.add_subplot(122)
-
-    #     # ax1.axis('off')
-    #     # ax1.imshow(trans_img)
-
-    #     # ax2.axis('off')
-    #     # ax2.imshow(rgb)
-
-    #     # 캔버스 업데이트
-    #     # self.test_canvas.draw()    
-    # def test_show(self,trans_img,rgb):
-    #     self.test_figure.clear()  # 이전 그래프 지우기
-    #     ax1 = self.test_figure.add_subplot(121)
-    #     ax2 = self.test_figure.add_subplot(122)
-
-    #     ax1.axis('off')
-    #     ax1.imshow(trans_img)
-
-    #     ax2.axis('off')
-    #     ax2.imshow(rgb)
-
-    #     # 캔버스 업데이트
-    #     self.test_canvas.draw()       
+        img_cropped = img.crop((left, top, right, bottom))
+        return img_cropped
     def test(self):
         # load pth model
         model = segmentation_train.torch.load(f'{self.model_path}\\model.pth')
         # set model to inference mode
         model.eval()
         #print(model)
-
-        folder_path = self.test_folder_path
-        for filename in os.listdir(folder_path):  # 폴더 내의 모든 파일에 대해 반복
+        test_path = self.test_folder_path
+        number=0; count=0
+        for filename in os.listdir(test_path):  # 폴더 내의 모든 파일에 대해 반복
             if filename.endswith(".jpg") or filename.endswith(".jfif") or filename.endswith(".webp"):  # 지원하는 파일 형식 검사
-                image_path = os.path.join(folder_path, filename)  # 파일 경로 생성
+                image_path = os.path.join(test_path, filename)  # 파일 경로 생성
                 img = Image.open(image_path)  # 이미지 파일 열기
                 start_time = segmentation_train.time.time()
                 img = ImageOps.exif_transpose(img)
+                img_show=img
                 transform = T.Compose([T.Resize(520),
                         T.CenterCrop(480),
                         T.ToTensor(),
@@ -345,22 +307,51 @@ class WindowClass(QTabWidget, form_class):
                 print (segmentation_train.np.unique(om))
                 rgb = self.decode_segmap(om)
                 print("prediction one image : ", round(end_time - start_time, 3))
-                self.test_show(trans_img,rgb)
-                # plt.subplot(121), plt.axis('off'), plt.imshow(trans_img)
-                # plt.subplot(122), plt.axis('off'), plt.imshow(rgb)
-                # plt.show()    
-    def test_show(self,trans_img,rgb):
-        self.test_figure.clear()  # 이전 그래프 지우기
-        ax1 = self.test_figure.add_subplot(121)
-        ax2 = self.test_figure.add_subplot(122)
-
-        ax1.axis('off')
-        ax1.imshow(trans_img)
-
-        ax2.axis('off')
-        ax2.imshow(rgb)
-
-        # 캔버스 업데이트
+                files = [f for f in os.listdir(test_path) if os.path.isfile(os.path.join(test_path, f))]
+                file_num = 2*len(files)
+                # 파일의 개수에 대한 제곱근 계산
+                sqrt = math.sqrt(file_num)
+                # 행과 열을 초기값으로 설정
+                rows = math.floor(sqrt)
+                cols = math.ceil(sqrt)
+                # 행 * 열이 파일 수보다 작을 경우, 행 또는 열을 늘려줌
+                while rows * cols < file_num:
+                    if cols > rows:
+                        rows += 1
+                    else:
+                        cols += 1
+                # cols가 홀수인 경우 다시 조정
+                if cols % 2 != 0:
+                    cols += 1
+                if(count>0):
+                    number += 2
+                else:
+                    number+=1
+                count+=1
+                test_image = img_show.resize((256, 256))  # 256x256으로 조정
+                test_image = self.resize_and_crop(img_show)
+                # rgb가 numpy.ndarray이면 Pillow 이미지로 변환
+                if isinstance(rgb, np.ndarray):
+                    rgb_img = Image.fromarray(rgb)  # numpy 배열을 Pillow 이미지로 변환
+                else:
+                    rgb_img = rgb  # 이미 Pillow 이미지인 경우
+                rgb_img = rgb_img.resize((256, 256))  # 256x256으로 조정
+                rgb_img = rgb_img.crop((16, 16, 240, 240))  # 중앙을 기준으로 224x224로 자르기
+                self.test_show(test_image,rows,cols,number,rgb_img)
+        print("finish test")
+            
+    def test_show(self,img,rows,cols,number,rgb):
+        sub = self.test_figure.add_subplot(rows, cols, number)
+        sub.set_aspect('equal')  # 비율 고정
+        # 축 숨기기
+        sub.axis('off')  # 축의 눈금과 라벨을 숨김
+        sub.imshow(img)  # img 표시
+                # 다음 서브플롯을 위한 새로운 축 생성
+        if number < rows * cols:
+            ax2 = self.test_figure.add_subplot(rows, cols, number + 1)  # 다음 서브플롯
+            ax2.axis('off')
+            ax2.imshow(rgb)  # rgb 표시
+            # 캔버스 업데이트
         self.test_canvas.draw() 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

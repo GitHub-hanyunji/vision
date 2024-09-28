@@ -6,7 +6,7 @@ from PyQt5.QtCore import QThread,pyqtSignal
 from PIL import Image
 import time
 import classification_train
-
+import math
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
@@ -247,10 +247,22 @@ class WindowClass(QTabWidget, form_class):
         test_dir = self.test_folder_path
         classification_train.os.chdir(test_dir)   # 작업 디렉토리 변경
         list = classification_train.os.listdir(test_dir)
-        file_num = 20
+        files = [f for f in os.listdir(test_dir) if os.path.isfile(os.path.join(test_dir, f))]
+        file_num = len(files)
+            # 파일의 개수에 대한 제곱근 계산
+        sqrt = math.sqrt(file_num)
+
+        # 행과 열을 초기값으로 설정
+        rows = math.floor(sqrt)
+        cols = math.ceil(sqrt)
+
+        # 행 * 열이 파일 수보다 작을 경우, 행 또는 열을 늘려줌
+        while rows * cols < file_num:
+            if cols > rows:
+                rows += 1
+            else:
+                cols += 1
         acc_num = 0
-        rows = 4
-        cols = 5
         number = 0
         for file in list:
             start_time = time.time()
