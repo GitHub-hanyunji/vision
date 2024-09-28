@@ -32,8 +32,8 @@ try:
 except ImportError as e:
     print("ImportError:", e)
 
-
-form_class = uic.loadUiType("new4.ui")[0]
+ui_path_result=current_file_dir+'\\new4.ui'
+form_class = uic.loadUiType(ui_path_result)[0]
 
 class MainWindow(QTabWidget,form_class):
     def __init__(self):
